@@ -1,0 +1,33 @@
+
+{% extends 'home.html' %}
+{% block content %}
+<div  class="container-fluid">
+<div class="card shadow">
+    <!-- Card Header - Dropdown -->
+    <div class="bg-gray-900 text-white card-header py-3 d-flex flex-row align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold ">Listado de Empresas</h6>
+      <a class="btn btn-primary NewUser" href="#"><i class="fa fa-plus-circle "></i>&nbsp;Nuevo empresa</a>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body ">
+
+      <table class="table  table-hover dt-responsive" id="TablaUser" style="width: 100%;">
+        <thead>
+          <tr>
+            <th class="all">Id</th>
+            <th>Razón Social</th>
+            <th>RUC</th>
+            <th>Creado</th>
+            <th>Modificado</th>
+         
+          </tr>
+        </thead>
+
+
+
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+    
