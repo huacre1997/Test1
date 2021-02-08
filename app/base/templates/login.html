@@ -22,15 +22,16 @@
     <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 </head>
 
-<body class="bg-gradient-primary">
+<body class="bg-gradient-primary" style="height: 100vh !important;">
 
-    <div class="container">
+    <div class="container h-100">
 
         <!-- Outer Row -->
-        <div class="row justify-content-center">
+        <div class="row justify-content-center align-items-center h-100">
 
             <div class="col-xl-6 col-lg-6 col-md-9">
 
@@ -43,9 +44,8 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Bienvenido</h1>
                                     </div>
-                                    <form class="user" method="POST" action="{% url 'base:login' %}">
+                                    <form  id="form-login" class="user" >
                                         {% csrf_token %}
-                                       
                                         <div class="form-group">
                                             <select class="form-select" name="business" aria-label="Default select example">
                                                 <option value="0" selected>Seleccione una empresa...</option>
@@ -71,7 +71,7 @@
                                                     Me</label>
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn  btn-block btn-primary">Login</button>
+                                        <button type="button" id="btn-login" data-url="{% url 'base:login' %}" class="btn  btn-block btn-primary">Login</button>
                                         <!-- <a href="index.html" class="btn btn-google btn-user btn-block">
                                             <i class="fab fa-google fa-fw"></i> Login with Google
                                         </a>
@@ -100,8 +100,23 @@
 
     <!-- Bootstrap core JavaScript-->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/login.js' %}"></script>
+        
+    <script>
+   const messages=(time,title,type,message)=>   {
+    Swal.fire({
+        title: title,
+        timer: time,
+        timerProgressBar: true,
+        icon: type,
+        showConfirmButton: false,
+        text: message,
+
+    })
+  }
+    </script>
     <!-- Core plugin JavaScript-->
     <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
 

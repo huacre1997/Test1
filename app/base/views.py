@@ -7,6 +7,7 @@ from django.http import JsonResponse,HttpResponse,HttpResponseRedirect
 from django.urls import reverse_lazy
 from business.models import Business
 from users.models import CustomUser
+# from users.models import Employee
 class IndexView(TemplateView):
     template_name="home.html"
 class Login(FormView):
@@ -14,28 +15,30 @@ class Login(FormView):
     form_class=AuthenticationForm
     success_url=reverse_lazy("base:home")
     def dispatch(self,request,*args, **kwargs):
-        print(request.user)
         if request.user.is_authenticated:
             return HttpResponseRedirect(self.success_url)
         return super().dispatch(request, *args, **kwargs)
     def post(self,request,*args,**kwargs):
-        print(self.request.POST)
-        username=request.POST["username"]
-        password=request.POST["password"]
-        form=AuthenticationForm(username,password)
-        permission=CustomUser.objects.filter(business__id=request.POST["business"])
-        if permission.exists():
-            if form.is_valid():
-                login(self.request,form.get_user())
-                print(authenticate)
-                return HttpResponseRedirect(self.success_url)
-            else:
-                return HttpResponse("Usuario o contraseña incorrecta.")
-        return HttpResponse("No tiene accesos a esa empresa.")
-    def form_valid(self,form):
-        print("form")
-        login(self.request,form.get_user())
-        return HttpResponseRedirect(self.success_url)
+        username=self.request.POST["username"]
+        password=self.request.POST["password"]
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_superuser:
+                login(self.request,user)
+                return JsonResponse({"status":200,"success":self.success_url} ,safe=False)
+
+            else:    
+                permission=CustomUser.objects.filter(business__id=request.POST["business"])
+                if permission.exists():
+
+                    login(self.request,user)
+                    return JsonResponse({"status":200,"success":self.success_url} ,safe=False)
+
+                else:
+                    return JsonResponse({"status":500,"message":"No tiene accessos a esta empresa."} ,safe=False)
+
+        return JsonResponse({"status":500,"message":"Usuario o contraseña incorrectos."},safe=False)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["business"] = Business.objects.all()

@@ -1,0 +1,84 @@
+{% if obj %}
+<form method="POST" id="business-form" role="form" class="business-form"
+    action="{% url 'business:edit_business' obj.pk %}">
+
+    {% else %}
+    <form method="POST" id="business-form" role="form" class="business-form  needs-validation"
+        action="{% url 'business:create_business' %}" novalidate>
+        {% endif %}
+        {% csrf_token %}
+        <input type="hidden" value="{% if obj %}edit{% else %}add{% endif %}" name="action">
+        <input type="hidden" value="{{obj.pk}}" id="id">
+
+
+        <div class="card-body">
+            <div class="form-outline  mb-3">
+                <input type="text" name="name" placeholder="Razón Social" maxlength="100" class="form-control"
+                    required="" id="id_name" value="{% if obj %}{{obj.name}}{% endif %}">
+                <div class="invalid-feedback" id="invalid_name"></div>
+            </div>
+            <div class="form-outline  mb-3">
+
+                <input placeholder="RUC" type="text" name="ruc" value="{% if obj %}{{obj.ruc}}{% endif %}"" maxlength="
+                    11" class="form-control" id="id_ruc">
+                <div class="invalid-feedback" id="invalid_ruc"></div>
+            </div>
+
+            <label for="id_status">Estado:</label>
+            <input type="checkbox" name="status" class="form-control" id="id_status" checked="">
+            <div class="dropdown-divider"></div>
+
+        </div>
+        <button type="submit" class="btn btn-primary" id="btnEdit" style="display:none">Submit</button>
+
+    </form>
+    {% block js_page %}
+    <script>
+        $("#business-form").on("submit", function (e) {
+            e.preventDefault()
+            let name = document.getElementById("id_name")
+            let ruc = document.getElementById("id_ruc")
+            let invalid_ruc = document.getElementById("invalid_ruc")
+            let invalid_name = document.getElementById("invalid_name")
+            var id =  document.getElementById("id").value
+            let form = document.getElementById("business-form")
+            let data = new FormData(form)
+            fetch($("#business-form").attr("action"), {
+                method: "POST",
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: data
+
+            }).then(data => data.json()).then(response => {
+                console.log(response);
+                if (response["stat"] == "ok") {
+                    de.close()
+                    messages(1000, "Éxito", "success", "Empresa guardada")
+                } else {
+                    if (response.hasOwnProperty("error")) {
+                        console.log("if");
+                        if (response.error.name) {
+                            name.classList.add("is-invalid")
+                            invalid_name.innerHTML = response.error.name[0]
+                        }
+                        if (response.error.ruc) {
+                            ruc.classList.add("is-invalid")
+                            invalid_ruc.innerHTML = response.error.ruc[0]
+                        }
+                    } else {
+
+                        jc.close()
+                        messages(2000, "Éxito", "success", "Empresa guardada")
+
+                        business_table.ajax.reload()
+                    }
+                }
+                business_table.ajax.reload()
+            })
+
+            return false;
+        });
+    </script>
+
+    {% endblock js_page %}

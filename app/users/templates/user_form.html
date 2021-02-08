@@ -1,0 +1,136 @@
+<style>
+    li{
+        list-style: none;
+    }
+</style>
+{% if obj %}
+<form method="POST" id="formUser" class="needs-validation" novalidate action="{% url 'users:edit_user' obj.pk %}" enctype="multipart/form-data">
+
+  {% else %}
+  <form method="POST" id="formUser" class="needs-validation" novalidate enctype="multipart/form-data">
+
+    {% endif %}
+    {% csrf_token %}
+
+    <input type="hidden" value="{% if obj %}edit{% else %}add{% endif %}" name="action">
+
+    <div class="card-body" >
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="">Nombres:</label>
+          <input value="{% if obj %}{{obj.first_name}}{% endif %}" type="text" name="first_name" id="id_first_name"
+            placeholder="Ingrese nombres"
+            class="{% if form.errors.first_name %}form-control is-invalid{% else %}form-control{% endif %} " required>
+
+          <div class="invalid-feedback">
+            
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="">Apellidos:</label>
+          <input value="{% if obj %}{{obj.last_name}}{% endif %}" type="text" name="last_name" id="id_last_name"
+            placeholder="Ingrese apellidos"
+            class="{% if form.errors.last_name %}form-control is-invalid{% else %}form-control{% endif %} " required>
+          <div class="invalid-feedback">
+            
+          </div>
+        </div>
+      </div>
+      <div class="form-group ">
+        <label for="">Correo:</label>
+        {{form.email}}
+
+        <div class="invalid-feedback">
+          
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="">Usuario:</label>
+          <input value="{% if obj %}{{obj.username}}{% endif %}" type="text" name="username" id="id_username"
+            placeholder="Usuario"
+            class="{% if form.errors.username %}form-control is-invalid{% else %}form-control{% endif %} " required>
+
+          <div class="invalid-feedback">
+            
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="">Contraseña:</label>
+          {{form.password}}
+
+          <div class="invalid-feedback">
+           
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="">Administrador:</label>
+          {{form.is_superuser}}
+
+       
+        </div>
+        <div class="form-group col-md-6">
+          <label for="">Usuario activo:</label>
+          {{form.is_active}}
+
+       
+        </div>
+      
+      </div>
+      <div class="form-group ">
+        <label for="">Imagen:</label>
+        <input type="file" name="image" accept="image/*" id="id_image">
+
+        <div class="invalid-feedback">
+        </div>
+      </div>
+      </div>
+      <div class="form-group">
+          {{form.business}}
+      
+      </div>
+      {{obj.first_name}}
+    </div>
+    <input type="hidden" value="{{obj.pk}}" id="id">
+    <button type="submit" class="btn btn-primary" id="btnEditUser" style="display:none">Submit</button>
+
+  </form>
+  {% block js_page %}
+  <script>
+    $("#btnEditUser").on("click", function (e) {
+      var id = $("#id").val()
+      
+      var paramaters=new FormData($('.needs-validation')[0])
+      $.ajax({
+        type: "POST",
+        url: $("#formUser").attr("action"),
+        data: paramaters,
+        dataType: "json",
+        processData: false,  // tell jQuery not to process the data
+        contentType: false,
+        success: function (data) {
+            console.log(data);
+          if (data["stat"] == "ok") {
+            de.close()
+            messages(2000, "Éxito", "success", "Empresa guardada")
+          } else {
+
+          
+            $(":text").keypress(function (e) {
+              $(this).removeClass("is-invalid")
+            });
+          }
+          user_table.ajax.reload()
+        }
+      }).done(function (data) {}).fail(function (jqXHR, textStatus, errorThrown) {
+                alert("done:" + textStatus + ': ' + errorThrown);
+              }).always(function (data) {
+
+              });;
+              return false;
+    });
+  </script>
+
+  {% endblock js_page %}
