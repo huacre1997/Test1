@@ -23,25 +23,14 @@ class Login(FormView):
         password=self.request.POST["password"]
         user = authenticate(username=username, password=password)
         if user is not None:
-            if user.is_superuser:
-                login(self.request,user)
-                return JsonResponse({"status":200,"success":self.success_url} ,safe=False)
+            login(self.request,user)
+            return JsonResponse({"status":200,"success":self.success_url} ,safe=False)
 
-            else:    
-                permission=CustomUser.objects.filter(business__id=request.POST["business"])
-                if permission.exists():
-
-                    login(self.request,user)
-                    return JsonResponse({"status":200,"success":self.success_url} ,safe=False)
-
-                else:
-                    return JsonResponse({"status":500,"message":"No tiene accessos a esta empresa."} ,safe=False)
-
+          
         return JsonResponse({"status":500,"message":"Usuario o contraseña incorrectos."},safe=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["business"] = Business.objects.all()
         return context
     
 class Logout(LogoutView):

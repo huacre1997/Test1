@@ -12,10 +12,10 @@ from django.forms import model_to_dict
 
 class CustomUser(AbstractUser):
     date=models.DateField(max_length=12,blank=True,null=True)
-    tel=models.CharField(max_length=9,blank=True,null=True)
+    cel=models.CharField(max_length=8,blank=True,null=True)
     dni=models.CharField(max_length=8,blank=True,null=True)
     image=models.ImageField(upload_to="users/%Y/%m/%d",null=True,blank=True)
-    business=models.ManyToManyField(Business, verbose_name="Empresas",related_name="business_fk",blank=True)
+    business=models.ManyToManyField(Business)
     def __str__(self):
         return self.first_name+" "+self.last_name
     def get_image(self):
